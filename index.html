@@ -552,53 +552,59 @@
         <div class="form-card-title">Send Us a Message</div>
         <p class="form-card-sub">Complete the form below and your message will be sent directly to our team at <a href="mailto:selenainvestmentltd@gmail.com" style="color:var(--gold-light);text-decoration:none;">selenainvestmentltd@gmail.com</a></p>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="f-name">Full Name *</label>
-            <input type="text" id="f-name" placeholder="Your full name" required>
+        <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/thank-you.html" id="contact-form" novalidate>
+          <!-- Netlify hidden fields -->
+          <input type="hidden" name="form-name" value="contact">
+          <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-name">Full Name *</label>
+              <input type="text" id="f-name" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="f-org">Organisation</label>
+              <input type="text" id="f-org" name="organisation" placeholder="Company or organisation">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="f-org">Organisation</label>
-            <input type="text" id="f-org" placeholder="Company or organisation">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-email">Email Address *</label>
+              <input type="email" id="f-email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+              <label for="f-phone">Phone / WhatsApp</label>
+              <input type="tel" id="f-phone" name="phone" placeholder="+675 XXXX XXXX">
+            </div>
           </div>
-        </div>
 
-        <div class="form-row">
           <div class="form-group">
-            <label for="f-email">Email Address *</label>
-            <input type="email" id="f-email" placeholder="your@email.com" required>
+            <label for="f-interest">Area of Interest</label>
+            <select id="f-interest" name="interest">
+              <option value="" disabled selected>Select an area of interest</option>
+              <option>Mining Investment &amp; Project Structuring</option>
+              <option>Mining Tenement Advisory</option>
+              <option>Joint Venture / Partnership</option>
+              <option>Geological &amp; Engineering Services</option>
+              <option>Regulatory Compliance &amp; Licensing</option>
+              <option>Community &amp; Landowner Engagement</option>
+              <option>Business Planning &amp; Strategy</option>
+              <option>General Enquiry</option>
+            </select>
           </div>
+
           <div class="form-group">
-            <label for="f-phone">Phone / WhatsApp</label>
-            <input type="tel" id="f-phone" placeholder="+675 XXXX XXXX">
+            <label for="f-message">Message *</label>
+            <textarea id="f-message" name="message" placeholder="Please describe your enquiry, project details, or how we can assist you..." required></textarea>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="f-interest">Area of Interest</label>
-          <select id="f-interest">
-            <option value="" disabled selected>Select an area of interest</option>
-            <option>Mining Investment &amp; Project Structuring</option>
-            <option>Mining Tenement Advisory</option>
-            <option>Joint Venture / Partnership</option>
-            <option>Geological &amp; Engineering Services</option>
-            <option>Regulatory Compliance &amp; Licensing</option>
-            <option>Community &amp; Landowner Engagement</option>
-            <option>Business Planning &amp; Strategy</option>
-            <option>General Enquiry</option>
-          </select>
-        </div>
+          <button type="submit" class="form-submit">Send Message &rarr;</button>
 
-        <div class="form-group">
-          <label for="f-message">Message *</label>
-          <textarea id="f-message" placeholder="Please describe your enquiry, project details, or how we can assist you..." required></textarea>
-        </div>
-
-        <button class="form-submit" onclick="submitForm()">Send Message &rarr;</button>
-
-        <div class="form-success" id="form-success">
-          <p>Thank you for reaching out. Your message has been sent to the SELENA Investments team. We will be in touch shortly.</p>
-        </div>
+          <div class="form-success" id="form-success" style="display:none;">
+            <p>Thank you for reaching out. Your message has been sent to the SELENA Investments team. We will be in touch shortly.</p>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -606,39 +612,51 @@
 </section>
 
 <script>
-function submitForm() {
-  var name = document.getElementById('f-name').value.trim();
-  var org = document.getElementById('f-org').value.trim();
-  var email = document.getElementById('f-email').value.trim();
-  var phone = document.getElementById('f-phone').value.trim();
-  var interest = document.getElementById('f-interest').value;
-  var message = document.getElementById('f-message').value.trim();
+(function () {
+  var form = document.getElementById('contact-form');
+  if (!form) return;
 
-  if (!name) { alert('Please enter your full name.'); return; }
-  if (!email) { alert('Please enter your email address.'); return; }
-  if (!message) { alert('Please enter your message.'); return; }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-  var subject = encodeURIComponent('Enquiry from ' + name + (org ? ' — ' + org : ''));
-  var body = encodeURIComponent(
-    'ENQUIRY — SELENA INVESTMENT LIMITED\n' +
-    '==========================================\n\n' +
-    'Name:           ' + name + '\n' +
-    'Organisation:   ' + (org || '—') + '\n' +
-    'Email:          ' + email + '\n' +
-    'Phone/WhatsApp: ' + (phone || '—') + '\n' +
-    'Area of Interest: ' + (interest || '—') + '\n\n' +
-    'MESSAGE:\n' +
-    '----------\n' +
-    message + '\n\n' +
-    '==========================================\n' +
-    'Sent via SELENA Investment Limited website'
-  );
+    var name    = document.getElementById('f-name').value.trim();
+    var email   = document.getElementById('f-email').value.trim();
+    var message = document.getElementById('f-message').value.trim();
 
-  window.location.href = 'mailto:selenainvestmentltd@gmail.com?subject=' + subject + '&body=' + body;
+    if (!name)    { alert('Please enter your full name.');      return; }
+    if (!email)   { alert('Please enter your email address.');  return; }
+    if (!message) { alert('Please enter your message.');        return; }
 
-  document.getElementById('form-success').style.display = 'block';
-  document.getElementById('form-success').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+    var btn = form.querySelector('.form-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    var data = new FormData(form);
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(data).toString()
+    })
+    .then(function (res) {
+      if (res.ok) {
+        // Show success message
+        form.querySelectorAll('.form-row, .form-group').forEach(function (el) { el.style.display = 'none'; });
+        btn.style.display = 'none';
+        var success = document.getElementById('form-success');
+        success.style.display = 'block';
+        success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        throw new Error('Network response was not ok');
+      }
+    })
+    .catch(function () {
+      btn.disabled = false;
+      btn.textContent = 'Send Message →';
+      alert('Sorry, there was a problem sending your message. Please email us directly at selenainvestmentltd@gmail.com');
+    });
+  });
+})();
 </script>
 
 <!-- FOOTER -->
